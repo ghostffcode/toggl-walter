@@ -1,0 +1,156 @@
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Improved Walter Calculator</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <style>
+      h2 {
+        font-family: "Courier New";
+      }
+      .reference {
+        font-size: 9px;
+        color: #aaa;
+        display: block;
+      }
+      .reference a {
+        color: #aaa;
+      }
+      input,button {
+        margin-left: 10px;
+        border: 1px solid gray;
+        background-color: white;
+      }
+      input {
+        width: 50px;
+      }
+      button:hover {
+        background-color: lightgray;
+      }
+    </style>
+    <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script>
+      var WALTER_PRICE = 0.53;
+      var TARE_PRICE = 0.08;
+
+      // Returns [num_walters, leftover_money]
+      function getNumWalters(money) {
+        var ret = [0, 0];
+        ret[0]=Math.floor(money/WALTER_PRICE);
+        ret[1]=round(money-ret[0]*WALTER_PRICE);
+        return ret;
+      }
+
+      function round(f) {
+        return Math.round(f*Math.pow(10,2))/Math.pow(10,2);
+      }
+
+      // Main calculation function
+      function computeCycles(money) {
+        var log = $('#log');
+        log.empty();
+
+        if (money<WALTER_PRICE) {
+          log.append('No Walter for you.\n');
+          return;
+        }
+
+        if (WALTER_PRICE==0.0) {
+          log.append('Dunno where you got that deal but you have a lifetime supply of free Walter!\n');
+          return;
+        }
+
+        if (Math.abs(WALTER_PRICE-TARE_PRICE)<0.001) {
+          log.append('Infinite loop\n');
+          return;
+        }
+
+        if (WALTER_PRICE<TARE_PRICE) {
+          log.append('Gongratulations! Your drinking has made you rich!\n');
+          return;
+        }
+
+        var totalWalters = 0;
+        var cycle = 1;
+        while (money>=WALTER_PRICE) {
+          var walters = getNumWalters(money);
+          totalWalters+=walters[0];
+          money=round(walters[1] + TARE_PRICE*walters[0]);
+          var line = 'Iteration #'+cycle+':\n';
+          line+='\tYou get '+walters[0]+' Walters.\n';
+          if (walters[1]>0.0)
+            line+='\tCash remaining: '+walters[1].toFixed(2)+'&euro;\n';
+          line+='\tYou get '+(TARE_PRICE*walters[0]).toFixed(2)+'&euro; for the tare.\n';
+          line+='\tTotal '+money.toFixed(2)+'&euro;\n';
+          line+='\n\n';
+          log.append(line);
+          cycle++;
+        }
+
+        log.append('\n\nIn total you get '+totalWalters+' Walters\n');
+
+        if (money>0.0) {
+          log.append('If you had '+round(WALTER_PRICE-money).toFixed(2)+'&euro; more, you\'d be able to buy one more beer!');
+        }
+      }
+
+      function doit() {
+        
+        var wprice=parseFloat($('#walter_price').val());
+        
+        // Pre-calculation validations
+        
+        if (isNaN(wprice) || !isFinite(wprice))
+          wprice=WALTER_PRICE;
+        if (wprice<0.0) wprice=0.0;
+        wprice=Math.round(wprice*100.0)/100.0;
+        $('#walter_price').val(wprice);
+        WALTER_PRICE=wprice;
+        var money = $('#money').val();
+        if (money=="") return;
+        money = parseFloat(money);
+        if (!isFinite(money)) {
+          var log = $('#log');
+          log.empty();
+          log.append('Liar! Nobody who has this much money buys Walter!');
+          return;
+        }
+        if (isNaN(money) || money<0.0)
+          money=0.0;
+        $('#money').val(money);
+        
+        // Run the calculation
+        
+        computeCycles(money);
+        
+      }
+
+      $(function() {
+        $('#money').focus();
+      })
+    </script>
+  </head>
+  <body>
+
+    <h2>Improved Walter Calculator<span class="reference">Sourced with permission from <a href="http://psychedelicdevelopment.com/walter/">http://psychedelicdevelopment.com/walter/</a></span></h2>
+
+    <table>
+      <caption><b>Input:</b></caption>
+      <tbody>
+        <tr>
+          <td>Price of Walter:</td>
+          <td><input id="walter_price" type="text" value="0.53"> € per bottle (inc. tare)</td>
+        </tr>
+      </tbody>
+    </table>
+    <br><br>
+    <form onsubmit="return false;">
+      I have <input id="money" type="text" onsubmit="doit(); return false;"> €
+      <button onclick="doit(); return false;">Calculate</button>
+    </form>
+    <br>
+    <br>
+    <pre id="log"></pre>
+  </body>
+
+</html>

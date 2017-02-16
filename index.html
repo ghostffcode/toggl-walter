@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <input type="text" name="" id="money" value="14" />
+    <button type="button" onclick="calc();" name="button">Calculate</button>
+    <p id="res"></p>
+    <script src="./build/bundle.js" charset="utf-8"></script>
+    <script type="text/javascript">
+      function calc() {
+        var res = document.getElementById('res');
+        new WalterCalculator(
+          document.getElementById('money').value,
+          function (data) {
+            console.log(data);
+            res.innerHTML = '';
+            data.forEach(function (cycle) {
+              res.innerHTML += 'On cycle '+ cycle.cycle+ ': Got '+ cycle.walter+' walters & $'+ cycle.leftOver+' left over. <br />';
+            })
+        });
+      }
+    </script>
+  </body>
+</html>

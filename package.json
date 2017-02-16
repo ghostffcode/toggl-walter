@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "./node_modules/.bin/http-server",
+    "build": "webpack",
+    "test": "./node_modules/.bin/mocha --compilers js:babel-core/register"
   },
   "keywords": [],
   "author": "",
@@ -14,5 +16,10 @@
     "babel-loader": "^6.3.0",
     "babel-preset-es2015": "^6.22.0",
     "webpack": "^2.2.1"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "http-server": "^0.9.0",
+    "mocha": "^3.2.0"
   }
 }

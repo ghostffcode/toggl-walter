@@ -3,13 +3,14 @@ module.exports = (function () {
   const config = {};
 
   // entry file
-  config.entry = './index.js',
+  config.entry = './src/index.js',
 
   // output configuration
   config.output = {
-    path: __dirname + '/output',
+    path: __dirname + '/build',
+    library: 'WalterCalculator',
     libraryTarget: 'umd',
-    filename: 'bundle.js'
+    filename: 'WalterCalculator.js'
   },
 
   // babel loader for es6
